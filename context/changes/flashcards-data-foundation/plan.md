@@ -227,23 +227,23 @@ Not applicable — this is a net-new table with no existing data to migrate.
 
 #### Automated
 
-- [x] 1.1 Local Supabase resets and applies the migration cleanly: `npx supabase db reset`
-- [x] 1.2 RLS is enabled and forced on `public.flashcards`
-- [x] 1.3 Linting passes: `npm run lint`
+- [x] 1.1 Local Supabase resets and applies the migration cleanly: `npx supabase db reset` — eeb3a0c
+- [x] 1.2 RLS is enabled and forced on `public.flashcards` — eeb3a0c
+- [x] 1.3 Linting passes: `npm run lint` — eeb3a0c
 
 #### Manual
 
-- [x] 1.4 Two test accounts each see/mutate only their own flashcard row; cross-user writes rejected
-- [x] 1.5 Deleting a test user cascades and removes their flashcard row
+- [x] 1.4 Two test accounts each see/mutate only their own flashcard row; cross-user writes rejected — eeb3a0c
+- [x] 1.5 Deleting a test user cascades and removes their flashcard row — eeb3a0c
 
 ### Phase 2: TypeScript Types
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npx astro check`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Production build succeeds: `npm run build`
+- [x] 2.1 Type checking passes: `npx astro check`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 Generated `Flashcard` row type matches Phase 1's migration columns
+- [x] 2.4 Generated `Flashcard` row type matches Phase 1's migration columns

@@ -1,7 +1,7 @@
 ---
 change_id: flashcards-data-foundation
 title: Flashcards data foundation
-status: implementing
+status: implemented
 created: 2026-08-22
 updated: 2026-08-22
 archived_at: null

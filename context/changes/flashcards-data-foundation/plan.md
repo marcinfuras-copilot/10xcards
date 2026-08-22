@@ -240,10 +240,10 @@ Not applicable — this is a net-new table with no existing data to migrate.
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npx astro check`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Production build succeeds: `npm run build`
+- [x] 2.1 Type checking passes: `npx astro check` — 91b790b
+- [x] 2.2 Linting passes: `npm run lint` — 91b790b
+- [x] 2.3 Production build succeeds: `npm run build` — 91b790b
 
 #### Manual
 
-- [x] 2.4 Generated `Flashcard` row type matches Phase 1's migration columns
+- [x] 2.4 Generated `Flashcard` row type matches Phase 1's migration columns — 91b790b

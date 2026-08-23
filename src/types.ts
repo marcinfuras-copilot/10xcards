@@ -11,3 +11,16 @@ export enum FsrsState {
   Review = 2,
   Relearning = 3,
 }
+
+export interface FlashcardCandidate {
+  question: string;
+  answer: string;
+}
+
+export interface GenerateFlashcardsRequest {
+  text: string;
+}
+
+export interface GenerateFlashcardsResponse {
+  candidates: FlashcardCandidate[];
+}

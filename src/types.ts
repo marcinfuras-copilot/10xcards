@@ -32,3 +32,12 @@ export interface SaveFlashcardsRequest {
 export interface SaveFlashcardsResponse {
   saved: number;
 }
+
+export interface DueCardsResponse {
+  cards: Flashcard[];
+}
+
+export interface SubmitReviewRequest {
+  id: number;
+  rating: "again" | "hard" | "good" | "easy";
+}

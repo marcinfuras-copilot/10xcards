@@ -372,30 +372,30 @@ Not applicable — no schema changes in this plan; F-01's `flashcards` table alr
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npx astro check`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Production build succeeds: `npm run build`
+- [x] 2.1 Type checking passes: `npx astro check` — 17b0ea6
+- [x] 2.2 Linting passes: `npm run lint` — 17b0ea6
+- [x] 2.3 Production build succeeds: `npm run build` — 17b0ea6
 
 #### Manual
 
-- [x] 2.4 Paste + submit shows generated candidates
-- [x] 2.5 Accept/reject toggling works per candidate
-- [x] 2.6 Edit dialog updates candidate text and marks it edited
-- [x] 2.7 Save persists only accepted candidates with correct `source`/`was_edited`
-- [x] 2.8 Signed-out visit to `/flashcards/new` redirects to sign-in
+- [x] 2.4 Paste + submit shows generated candidates — 17b0ea6
+- [x] 2.5 Accept/reject toggling works per candidate — 17b0ea6
+- [x] 2.6 Edit dialog updates candidate text and marks it edited — 17b0ea6
+- [x] 2.7 Save persists only accepted candidates with correct `source`/`was_edited` — 17b0ea6
+- [x] 2.8 Signed-out visit to `/flashcards/new` redirects to sign-in — 17b0ea6
 
 ### Phase 3: Spaced-Repetition Study Session
 
 #### Automated
 
-- [ ] 3.1 Type checking passes: `npx astro check`
-- [ ] 3.2 Linting passes: `npm run lint`
-- [ ] 3.3 Production build succeeds: `npm run build`
+- [x] 3.1 Type checking passes: `npx astro check`
+- [x] 3.2 Linting passes: `npm run lint`
+- [x] 3.3 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 3.4 Due card(s) appear in a study session
-- [ ] 3.5 Grading with each of the four ratings updates scheduling fields plausibly
-- [ ] 3.6 Session-complete state shows after all due cards are graded
-- [ ] 3.7 Empty state shows when zero cards are due
-- [ ] 3.8 Signed-out visit to `/study` redirects to sign-in
+- [x] 3.4 Due card(s) appear in a study session
+- [x] 3.5 Grading with each of the four ratings updates scheduling fields plausibly
+- [x] 3.6 Session-complete state shows after all due cards are graded
+- [x] 3.7 Empty state shows when zero cards are due
+- [x] 3.8 Signed-out visit to `/study` redirects to sign-in

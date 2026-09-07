@@ -24,3 +24,11 @@ export interface GenerateFlashcardsRequest {
 export interface GenerateFlashcardsResponse {
   candidates: FlashcardCandidate[];
 }
+
+export interface SaveFlashcardsRequest {
+  cards: { question: string; answer: string; wasEdited: boolean }[];
+}
+
+export interface SaveFlashcardsResponse {
+  saved: number;
+}

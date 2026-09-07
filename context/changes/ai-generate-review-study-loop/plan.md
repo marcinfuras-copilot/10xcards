@@ -357,32 +357,32 @@ Not applicable — no schema changes in this plan; F-01's `flashcards` table alr
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npx astro check`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Production build succeeds: `npm run build`
+- [x] 1.1 Type checking passes: `npx astro check` — fe84e1f
+- [x] 1.2 Linting passes: `npm run lint` — fe84e1f
+- [x] 1.3 Production build succeeds: `npm run build` — fe84e1f
 
 #### Manual
 
-- [x] 1.4 Valid authenticated request to `/api/flashcards/generate` returns non-empty valid candidates
-- [x] 1.5 Under/over length input returns 400
-- [x] 1.6 Unauthenticated request returns 401
-- [x] 1.7 Unconfigured `OPENROUTER_API_KEY` returns a clear error and shows the sitewide config banner
+- [x] 1.4 Valid authenticated request to `/api/flashcards/generate` returns non-empty valid candidates — fe84e1f
+- [x] 1.5 Under/over length input returns 400 — fe84e1f
+- [x] 1.6 Unauthenticated request returns 401 — fe84e1f
+- [x] 1.7 Unconfigured `OPENROUTER_API_KEY` returns a clear error and shows the sitewide config banner — fe84e1f
 
 ### Phase 2: Review UI & Save
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npx astro check`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Production build succeeds: `npm run build`
+- [x] 2.1 Type checking passes: `npx astro check`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 Paste + submit shows generated candidates
-- [ ] 2.5 Accept/reject toggling works per candidate
-- [ ] 2.6 Edit dialog updates candidate text and marks it edited
-- [ ] 2.7 Save persists only accepted candidates with correct `source`/`was_edited`
-- [ ] 2.8 Signed-out visit to `/flashcards/new` redirects to sign-in
+- [x] 2.4 Paste + submit shows generated candidates
+- [x] 2.5 Accept/reject toggling works per candidate
+- [x] 2.6 Edit dialog updates candidate text and marks it edited
+- [x] 2.7 Save persists only accepted candidates with correct `source`/`was_edited`
+- [x] 2.8 Signed-out visit to `/flashcards/new` redirects to sign-in
 
 ### Phase 3: Spaced-Repetition Study Session
 

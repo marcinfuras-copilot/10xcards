@@ -1,7 +1,7 @@
 ---
 change_id: ai-generate-review-study-loop
 title: AI generate, review, save, and study loop
-status: implementing
+status: implemented
 created: 2026-08-22
 updated: 2026-09-07
 archived_at: null

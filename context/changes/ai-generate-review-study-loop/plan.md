@@ -388,14 +388,14 @@ Not applicable — no schema changes in this plan; F-01's `flashcards` table alr
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npx astro check`
-- [x] 3.2 Linting passes: `npm run lint`
-- [x] 3.3 Production build succeeds: `npm run build`
+- [x] 3.1 Type checking passes: `npx astro check` — 7219ae4
+- [x] 3.2 Linting passes: `npm run lint` — 7219ae4
+- [x] 3.3 Production build succeeds: `npm run build` — 7219ae4
 
 #### Manual
 
-- [x] 3.4 Due card(s) appear in a study session
-- [x] 3.5 Grading with each of the four ratings updates scheduling fields plausibly
-- [x] 3.6 Session-complete state shows after all due cards are graded
-- [x] 3.7 Empty state shows when zero cards are due
-- [x] 3.8 Signed-out visit to `/study` redirects to sign-in
+- [x] 3.4 Due card(s) appear in a study session — 7219ae4
+- [x] 3.5 Grading with each of the four ratings updates scheduling fields plausibly — 7219ae4
+- [x] 3.6 Session-complete state shows after all due cards are graded — 7219ae4
+- [x] 3.7 Empty state shows when zero cards are due — 7219ae4
+- [x] 3.8 Signed-out visit to `/study` redirects to sign-in — 7219ae4

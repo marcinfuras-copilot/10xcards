@@ -14,27 +14,30 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done · 🔒 human-only 
 
 ### 0.1 — Configure the Wrangler CLI (Cloudflare)
 
-- [ ] No global install needed — `wrangler` is already a devDependency (`^4.90.0` in `package.json`), so every command below runs via `npx wrangler ...` from the repo root.
-- [ ] 🔒 Confirm/create the Cloudflare account that will own this Worker (sign up at `dash.cloudflare.com` if none exists — free, no card required for the account itself).
-- [ ] 🔒 `npx wrangler login` — opens a browser for interactive OAuth. Must run in a real browser session, not headless/CI. **Verified: this repo is currently not authenticated** (`npx wrangler whoami` → "You are not authenticated").
-- [ ] Verify it worked: `npx wrangler whoami` should print the logged-in account email and any Account IDs available to it.
-- [ ] **Edge case — multiple Cloudflare accounts on one login.** If `whoami` lists more than one Account ID (e.g. a personal account plus an org), `wrangler deploy` will prompt to pick one interactively the first time — inconvenient for an agent-run deploy. Pin it explicitly instead: add `"account_id": "<the-right-id>"` to `wrangler.jsonc`, or export `CLOUDFLARE_ACCOUNT_ID=<id>` in the shell before running `wrangler` commands non-interactively.
-- [ ] 🔒 Optional, skip for now if deploys stay human-run from a local terminal: create a scoped API token (Workers Scripts: Edit, this one project only — no DNS, no billing, no other zones) for any future CI/agent use, per infra.md's "tokens are scoped, not master keys" posture. Store it as `CLOUDFLARE_API_TOKEN` in the environment running `wrangler` — never in a committed file.
-- [ ] **Edge case — no git repo.** This working directory has no `.git` (`git status` fails with "not a git repository"). The existing `.github/workflows/ci.yml` assumes push/PR to `master` on GitHub, but nothing is actually version-controlled or pushed yet. Before CI can run: `git init`, create the GitHub repo, push, then add `SUPABASE_URL`/`SUPABASE_KEY` as repo secrets (Settings → Secrets and variables → Actions). Independent of the Cloudflare deploy path itself (deploys can happen from a local terminal without any of this) — flagging it only because CI currently can't run at all.
+- [x] No global install needed — `wrangler` is already a devDependency (`^4.90.0` in `package.json`), so every command below runs via `npx wrangler ...` from the repo root.
+- [x] 🔒 Cloudflare account confirmed via `wrangler whoami` — `Pcmaxpl@gmail.com's Account` (Account ID `22211c04c7325c830a3dae4a46fee069`).
+- [x] 🔒 `npx wrangler login` completed — OAuth token, logged in as `pcmaxpl@gmail.com`.
+- [x] Verified via `npx wrangler whoami` — prints the account email and the one Account ID available to it.
+- [x] **Edge case — multiple Cloudflare accounts on one login**: N/A here, `whoami` lists exactly one Account ID, so no `account_id`/`CLOUDFLARE_ACCOUNT_ID` pinning is needed.
+- [ ] 🔒 Optional, still deferred: scoped API token for CI/agent use. Not needed yet since deploys are running from this local terminal session under the OAuth login (which is broad-scoped — fine for now, revisit if a CI pipeline needs its own token later).
+- [x] **Edge case — no git repo**: resolved. `git init` → `gh repo create 10xcards --public` (created manually by the user after the CLI token lacked repo-creation scope) → `git remote add origin` → `git push -u origin main`. Repo is live at `github.com/marcinfuras-copilot/10xcards`. Note: the push initially failed because the fine-grained PAT lacked the `workflow` scope needed to push `.github/workflows/ci.yml` — fixed by granting "Workflows: Read and write" on the token, then the push succeeded.
+- [ ] Still open: add `SUPABASE_URL`/`SUPABASE_KEY` as GitHub repo secrets (`gh secret set ...`) so `.github/workflows/ci.yml`'s build step goes green.
 
 ### 0.2 — Configure Supabase
 
-- [ ] No global install needed here either — `supabase` CLI is already a devDependency (`^2.23.4`), run via `npx supabase ...`.
-- [ ] 🔒 Create/confirm the hosted Supabase project that production will point at: sign in at `supabase.com/dashboard` → New Project. Pick a region close to where users actually are (single-region is fine per the infra decision) and record the DB password somewhere safe — not needed for this app's current auth-only usage, but Supabase requires setting one at project creation and it's needed later for any direct Postgres access.
-- [ ] Get the two values `src/lib/supabase.ts` actually needs: Project Settings → API → **Project URL** and **anon public key**. These become `SUPABASE_URL` / `SUPABASE_KEY` — the same names already declared in `astro.config.mjs`'s `env.schema` and used as placeholders in `.env.example`.
-- [ ] Put them in `.dev.vars` (gitignored, already present with placeholder values) for local `wrangler dev` — this file already exists at the repo root, just fill in the real values.
-- [ ] **Decide local-dev strategy before filling in `.dev.vars`** — two real options:
-  - **(a) Point local dev straight at the hosted project.** Simplest — paste the real Project URL/anon key into `.dev.vars`. Tradeoff: local development then exercises production auth data (real signups land in the real `auth.users` table). Fine for a solo MVP, but worth knowing.
-  - **(b) Run Supabase locally instead.** `npx supabase start` (requires Docker Desktop or equivalent running, ~7GB RAM per this project's CLAUDE.md) spins up a local Postgres + Auth stack; Studio at `http://localhost:54323`. Point `.dev.vars` at the local API URL/anon key it prints instead (defaults: URL `http://127.0.0.1:54321`, anon key printed by `supabase start`/`supabase status`). No migrations exist yet, so the local stack only needs Auth's built-in `auth.users` table — nothing to seed.
-  - Recommendation: use (b) once flashcard tables and migrations start landing (soon, per the PRD), so schema changes get tested locally before touching production; (a) is acceptable for now since only auth exists.
+- [x] No global install needed here either — `supabase` CLI is already a devDependency (`^2.23.4`), run via `npx supabase ...`.
+- [x] **Decided local-dev strategy: (b) run Supabase locally.** `npx supabase start` required installing Docker first (not present in this environment) — installed via `apt-get install docker-ce ...`, then the user's shell needed `sg docker -c "..."` to pick up the new `docker` group membership without a full re-login. Local stack is now running:
+  - Project URL (API): `http://127.0.0.1:54321`
+  - Studio: `http://127.0.0.1:54323` · Mailpit (catches confirmation emails locally): `http://127.0.0.1:54324`
+  - Database: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
+  - No migrations exist yet, so the stack only needed Auth's built-in `auth.users` table — nothing to seed.
+- [x] `.dev.vars` filled in with the local stack's **Publishable** key (the anon-key equivalent — respects RLS via the session cookie): `SUPABASE_URL=http://127.0.0.1:54321`, `SUPABASE_KEY=sb_publishable_...`. The **Secret** key (service-role equivalent) was deliberately not used here — per the Supabase security checklist, it must never reach a public/session-scoped client.
+- [ ] **Edge case surfaced by `supabase start` itself, not previously flagged**: local services bind to `0.0.0.0` (network-accessible, not just localhost) with shared default keys, and Studio/pgMeta/analytics have no authentication. Fine on a personal dev machine; don't expose this port range on a shared/untrusted network.
+- [ ] 🔒 Still open — **create the hosted Supabase project** that production will actually point at (this is separate from the local stack above, which is dev-only): `npx supabase login` (interactive OAuth) → `npx supabase projects create` (pick org + region). Needed before Phase 2/3 can get real production `SUPABASE_URL`/`SUPABASE_KEY` values.
+- [ ] Get the two values `src/lib/supabase.ts` needs from the **hosted** project once created: Project Settings → API → **Project URL** and **Publishable key**. These become the production `SUPABASE_URL` / `SUPABASE_KEY` secrets in Phase 2 — distinct from the local `.dev.vars` values above.
 - [ ] 🔒 Set the Auth **Site URL** and **Redirect URLs** (Authentication → URL Configuration in the Supabase dashboard) to the real deployed Worker URL once Phase 3 gives you one (e.g. `https://<worker-name>.<subdomain>.workers.dev`). **Edge case**: until this is set, Supabase's default is `localhost` — the confirm-email link sent during the Phase 3 sign-up smoke test will redirect to `localhost` instead of the live site, making that step look broken even though auth itself worked. Do this *before* running the Phase 3 smoke test, not after.
-- [ ] **Edge case — email confirmation delivery.** Supabase's built-in email sender is rate-limited and meant for testing only, not production volume — fine for the Phase 3 smoke test and early MVP traffic, but if confirmation emails silently don't arrive, check Authentication → Logs in the dashboard before assuming the app code is broken. Configuring a custom SMTP provider is a later, separate task (out of scope here).
-- [ ] Only needed once schema migrations start (not required for today's auth-only scope, listed here so it isn't rediscovered later under pressure): `npx supabase login`, then `npx supabase link --project-ref <ref>` (the ref is the short ID in the project's dashboard URL) to connect this CLI to the hosted project for `supabase db push`/migration workflows.
+- [ ] **Edge case — email confirmation delivery.** Supabase's built-in email sender is rate-limited and meant for testing only, not production volume — fine for the Phase 3 smoke test and early MVP traffic, but if confirmation emails silently don't arrive, check Authentication → Logs in the dashboard before assuming the app code is broken. Configuring a custom SMTP provider is a later, separate task (out of scope here). Locally, Mailpit (`http://127.0.0.1:54324`) already catches every confirmation email without needing real delivery.
+- [ ] Only needed once schema migrations start (not required for today's auth-only scope, listed here so it isn't rediscovered later under pressure): `npx supabase link --project-ref <ref>` (the ref is the short ID in the hosted project's dashboard URL) to connect this CLI to the hosted project for `supabase db push`/migration workflows.
 
 ## Phase 1 — Pre-deploy configuration check
 
@@ -53,11 +56,12 @@ Action items:
 
 ## Phase 2 — Secrets 🔒
 
-- [ ] 🔒 `npx wrangler secret put SUPABASE_URL`
-- [ ] 🔒 `npx wrangler secret put SUPABASE_KEY`
+- [x] 🔒 `npx wrangler secret put SUPABASE_URL` — set to the hosted project's URL (`https://fvarvgjliionghhmrsqq.supabase.co`).
+- [x] 🔒 `npx wrangler secret put SUPABASE_KEY` — set to the hosted project's **publishable** key (not `service_role`/secret, per the Supabase security checklist — that key must never reach this client). Verified via `npx wrangler secret list`.
 - [ ] 🔒 (Later, when the AI-generation feature lands) `npx wrangler secret put OPENROUTER_API_KEY`
-- [ ] Confirm `.dev.vars` (already gitignored) stays the local-only equivalent — never commit it, never put secrets in `wrangler.jsonc`.
-- [ ] Note for the record: Cloudflare Secrets Store exists but is still beta and account-scoped/cross-Worker — confirmed unnecessary for this single-Worker MVP; `wrangler secret put` remains the current, non-deprecated mechanism.
+- [x] `.dev.vars` (gitignored) stays the local-only equivalent, pointed at the local Docker Supabase stack from Phase 0.2 — never committed, no secrets in `wrangler.jsonc`.
+- [x] Cloudflare Secrets Store confirmed unnecessary for this single-Worker MVP — `wrangler secret put` used as the current, non-deprecated mechanism.
+- [x] **Note**: creating the Worker via `wrangler secret put` (it auto-creates the Worker if one doesn't exist yet) was blocked once by Cloudflare error `10034` ("verify your email address") even though the account's My Profile page showed no pending-verification banner — a documented, currently-open Cloudflare bug/mismatch (multiple 2026 community reports, one related GitHub issue closed without a fix). Resolved by using "Update email" to re-enter the same address, which re-triggered a fresh verification email. Worth remembering if this resurfaces on a future account.
 
 ## Phase 3 — First deploy & live verification
 

@@ -26,18 +26,22 @@ export default function ManualCreateForm() {
   const [savedCount, setSavedCount] = useState(0);
 
   const questionError =
-    question.trim().length === 0
-      ? "Question is required"
-      : question.length > QUESTION_MAX_LENGTH
-        ? `Question must be ${QUESTION_MAX_LENGTH} characters or fewer`
+    question.length > QUESTION_MAX_LENGTH
+      ? `Question must be ${QUESTION_MAX_LENGTH} characters or fewer`
+      : question.length > 0 && question.trim().length === 0
+        ? "Question is required"
         : undefined;
   const answerError =
-    answer.trim().length === 0
-      ? "Answer is required"
-      : answer.length > ANSWER_MAX_LENGTH
-        ? `Answer must be ${ANSWER_MAX_LENGTH} characters or fewer`
+    answer.length > ANSWER_MAX_LENGTH
+      ? `Answer must be ${ANSWER_MAX_LENGTH} characters or fewer`
+      : answer.length > 0 && answer.trim().length === 0
+        ? "Answer is required"
         : undefined;
-  const isValid = !questionError && !answerError;
+  const isValid =
+    question.trim().length > 0 &&
+    question.length <= QUESTION_MAX_LENGTH &&
+    answer.trim().length > 0 &&
+    answer.length <= ANSWER_MAX_LENGTH;
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();

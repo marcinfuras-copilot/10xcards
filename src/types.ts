@@ -50,3 +50,20 @@ export interface CreateManualFlashcardRequest {
 export interface CreateManualFlashcardResponse {
   flashcard: Flashcard;
 }
+
+export interface ListFlashcardsResponse {
+  flashcards: Flashcard[];
+}
+
+export interface UpdateFlashcardRequest {
+  question: string;
+  answer: string;
+}
+
+export interface UpdateFlashcardResponse {
+  flashcard: Flashcard;
+}
+
+export interface DeleteFlashcardResponse {
+  ok: true;
+}

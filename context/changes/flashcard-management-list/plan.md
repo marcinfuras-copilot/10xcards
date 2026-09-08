@@ -191,28 +191,28 @@ No schema migration needed — RLS policies for select/update/delete already exi
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npx astro check`
-- [x] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 Type checking passes: `npx astro check` — c12842f
+- [x] 1.2 Linting passes: `npm run lint` — c12842f
 
 #### Manual
 
-- [x] 1.3 GET /api/flashcards returns only the current user's cards, newest first
-- [x] 1.4 PATCH /api/flashcards/:id updates and returns the row; 404 on another user's/nonexistent id
-- [x] 1.5 DELETE /api/flashcards/:id removes the row; 404 on another user's/nonexistent id
-- [x] 1.6 Both endpoints return 401 when unauthenticated
+- [x] 1.3 GET /api/flashcards returns only the current user's cards, newest first — c12842f
+- [x] 1.4 PATCH /api/flashcards/:id updates and returns the row; 404 on another user's/nonexistent id — c12842f
+- [x] 1.5 DELETE /api/flashcards/:id removes the row; 404 on another user's/nonexistent id — c12842f
+- [x] 1.6 Both endpoints return 401 when unauthenticated — c12842f
 
 ### Phase 2: Flashcard list UI
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npx astro check`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Build succeeds: `npm run build`
+- [x] 2.1 Type checking passes: `npx astro check`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 Topbar "My flashcards" link navigates to `/flashcards` and lists cards newest-first
-- [ ] 2.5 Empty state shows with zero flashcards and its links work
-- [ ] 2.6 Editing a card updates the list immediately and persists across reload
-- [ ] 2.7 Deleting a card removes it from the list immediately and stays gone across reload
-- [ ] 2.8 Signed-out visit to `/flashcards` redirects per existing protected-route middleware
+- [x] 2.4 Topbar "My flashcards" link navigates to `/flashcards` and lists cards newest-first
+- [x] 2.5 Empty state shows with zero flashcards and its links work
+- [x] 2.6 Editing a card updates the list immediately and persists across reload
+- [x] 2.7 Deleting a card removes it from the list immediately and stays gone across reload
+- [x] 2.8 Signed-out visit to `/flashcards` redirects per existing protected-route middleware

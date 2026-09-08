@@ -178,14 +178,14 @@ No schema migration needed — `source = 'manual'` is already a valid value in t
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npx astro check`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Build succeeds: `npm run build`
+- [x] 2.1 Type checking passes: `npx astro check` — 8deb633
+- [x] 2.2 Linting passes: `npm run lint` — 8deb633
+- [x] 2.3 Build succeeds: `npm run build` — 8deb633
 
 #### Manual
 
-- [x] 2.4 Topbar "New flashcard" link navigates to `/flashcards/manual`
-- [x] 2.5 Valid submit saves, clears the form, and shows an inline success message; repeat submits work without reload
-- [x] 2.6 Client-side validation blocks empty/over-length question or answer with `EditCandidateDialog`-style messaging
-- [x] 2.7 Newly created manual card appears in a `/study` session
-- [x] 2.8 Signed-out visit to `/flashcards/manual` redirects per existing protected-route middleware
+- [x] 2.4 Topbar "New flashcard" link navigates to `/flashcards/manual` — 8deb633
+- [x] 2.5 Valid submit saves, clears the form, and shows an inline success message; repeat submits work without reload — 8deb633
+- [x] 2.6 Client-side validation blocks empty/over-length question or answer with `EditCandidateDialog`-style messaging — 8deb633
+- [x] 2.7 Newly created manual card appears in a `/study` session — 8deb633
+- [x] 2.8 Signed-out visit to `/flashcards/manual` redirects per existing protected-route middleware — 8deb633

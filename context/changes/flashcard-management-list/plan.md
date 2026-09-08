@@ -205,14 +205,14 @@ No schema migration needed — RLS policies for select/update/delete already exi
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npx astro check`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Build succeeds: `npm run build`
+- [x] 2.1 Type checking passes: `npx astro check` — 544ac5d
+- [x] 2.2 Linting passes: `npm run lint` — 544ac5d
+- [x] 2.3 Build succeeds: `npm run build` — 544ac5d
 
 #### Manual
 
-- [x] 2.4 Topbar "My flashcards" link navigates to `/flashcards` and lists cards newest-first
-- [x] 2.5 Empty state shows with zero flashcards and its links work
-- [x] 2.6 Editing a card updates the list immediately and persists across reload
-- [x] 2.7 Deleting a card removes it from the list immediately and stays gone across reload
-- [x] 2.8 Signed-out visit to `/flashcards` redirects per existing protected-route middleware
+- [x] 2.4 Topbar "My flashcards" link navigates to `/flashcards` and lists cards newest-first — 544ac5d
+- [x] 2.5 Empty state shows with zero flashcards and its links work — 544ac5d
+- [x] 2.6 Editing a card updates the list immediately and persists across reload — 544ac5d
+- [x] 2.7 Deleting a card removes it from the list immediately and stays gone across reload — 544ac5d
+- [x] 2.8 Signed-out visit to `/flashcards` redirects per existing protected-route middleware — 544ac5d

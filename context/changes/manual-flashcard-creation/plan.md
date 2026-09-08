@@ -166,26 +166,26 @@ No schema migration needed — `source = 'manual'` is already a valid value in t
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npx astro check`
-- [x] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 Type checking passes: `npx astro check` — 82628c6
+- [x] 1.2 Linting passes: `npm run lint` — 82628c6
 
 #### Manual
 
-- [x] 1.3 POST /api/flashcards/manual with valid session + valid body returns 200 and inserts a `source = 'manual'`, `was_edited = false` row
-- [x] 1.4 POST without auth returns 401; invalid/oversized body returns 400
+- [x] 1.3 POST /api/flashcards/manual with valid session + valid body returns 200 and inserts a `source = 'manual'`, `was_edited = false` row — 82628c6
+- [x] 1.4 POST without auth returns 401; invalid/oversized body returns 400 — 82628c6
 
 ### Phase 2: Manual creation UI
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npx astro check`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Build succeeds: `npm run build`
+- [x] 2.1 Type checking passes: `npx astro check`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 Topbar "New flashcard" link navigates to `/flashcards/manual`
-- [ ] 2.5 Valid submit saves, clears the form, and shows an inline success message; repeat submits work without reload
-- [ ] 2.6 Client-side validation blocks empty/over-length question or answer with `EditCandidateDialog`-style messaging
-- [ ] 2.7 Newly created manual card appears in a `/study` session
-- [ ] 2.8 Signed-out visit to `/flashcards/manual` redirects per existing protected-route middleware
+- [x] 2.4 Topbar "New flashcard" link navigates to `/flashcards/manual`
+- [x] 2.5 Valid submit saves, clears the form, and shows an inline success message; repeat submits work without reload
+- [x] 2.6 Client-side validation blocks empty/over-length question or answer with `EditCandidateDialog`-style messaging
+- [x] 2.7 Newly created manual card appears in a `/study` session
+- [x] 2.8 Signed-out visit to `/flashcards/manual` redirects per existing protected-route middleware

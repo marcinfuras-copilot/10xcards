@@ -41,3 +41,12 @@ export interface SubmitReviewRequest {
   id: number;
   rating: "again" | "hard" | "good" | "easy";
 }
+
+export interface CreateManualFlashcardRequest {
+  question: string;
+  answer: string;
+}
+
+export interface CreateManualFlashcardResponse {
+  flashcard: Flashcard;
+}

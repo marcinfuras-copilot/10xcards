@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CircleCheck } from "lucide-react";
 import { GenerateForm } from "@/components/flashcards/GenerateForm";
 import { CandidateCard } from "@/components/flashcards/CandidateCard";
@@ -38,6 +38,14 @@ export default function ReviewSession() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [savedCount, setSavedCount] = useState(0);
+  const mountedRef = useRef(true);
+  const isMounted = () => mountedRef.current;
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const acceptedCount = candidates.filter((c) => c.accepted).length;
   const editingCandidate = candidates.find((c) => c.id === editingId) ?? null;
@@ -52,13 +60,18 @@ export default function ReviewSession() {
         body: JSON.stringify({ text: sourceText } satisfies GenerateFlashcardsRequest),
       });
 
+      if (!isMounted()) return;
+
       if (!response.ok) {
-        setGenerateError(await parseErrorMessage(response, "Failed to generate flashcards"));
+        const message = await parseErrorMessage(response, "Failed to generate flashcards");
+        if (!isMounted()) return;
+        setGenerateError(message);
         setStatus("idle");
         return;
       }
 
       const data = (await response.json()) as GenerateFlashcardsResponse;
+      if (!isMounted()) return;
       setCandidates(
         data.candidates.map((candidate) => ({
           ...candidate,
@@ -69,8 +82,10 @@ export default function ReviewSession() {
       );
       setStatus("reviewing");
     } catch {
-      setGenerateError("Failed to reach the server. Please try again.");
-      setStatus("idle");
+      if (isMounted()) {
+        setGenerateError("Failed to reach the server. Please try again.");
+        setStatus("idle");
+      }
     }
   }
 
@@ -98,18 +113,25 @@ export default function ReviewSession() {
         } satisfies SaveFlashcardsRequest),
       });
 
+      if (!isMounted()) return;
+
       if (!response.ok) {
-        setSaveError(await parseErrorMessage(response, "Couldn't save flashcards"));
+        const message = await parseErrorMessage(response, "Couldn't save flashcards");
+        if (!isMounted()) return;
+        setSaveError(message);
         setStatus("reviewing");
         return;
       }
 
       const data = (await response.json()) as SaveFlashcardsResponse;
+      if (!isMounted()) return;
       setSavedCount(data.saved);
       setStatus("done");
     } catch {
-      setSaveError("Failed to reach the server. Please try again.");
-      setStatus("reviewing");
+      if (isMounted()) {
+        setSaveError("Failed to reach the server. Please try again.");
+        setStatus("reviewing");
+      }
     }
   }
 

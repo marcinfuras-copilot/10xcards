@@ -94,6 +94,8 @@ A page and form that let a logged-in user reach the new endpoint, plus a nav lin
 
 **Contract**: Default export, no props (self-contained, like `ReviewSession.tsx`). Internal states: `question`, `answer`, `status: "idle" | "saving"`, `error: string | null`, `savedCount` (a running count of cards saved this session, shown in the success confirmation — e.g. "Saved! (3 so far)"). Uses `CreateManualFlashcardRequest`/`CreateManualFlashcardResponse` from `src/types.ts` and the same `parseErrorMessage` pattern used in `ReviewSession.tsx` for surfacing server errors.
 
+**Addendum (impl review, commit `c2b932d`)**: validation-timing follows `GenerateForm.tsx`'s convention, not `EditCandidateDialog.tsx`'s literally as first stated above — the "required" error text is suppressed on an untouched, empty field, and only appears once a field has been typed into and then left empty/whitespace-only (matching `GenerateForm.tsx`'s `tooShort`-style gating). This avoids flashing "required" on a pristine empty form. Regardless of which convention gates the *error message*, the `isValid` computation independently requires trimmed length > 0 for both fields, so a whitespace-only submission is still blocked either way.
+
 #### 2. Manual create page
 
 **File**: `src/pages/flashcards/manual.astro`

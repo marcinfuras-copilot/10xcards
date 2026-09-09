@@ -1,24 +1,17 @@
 import type { APIRoute } from "astro";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase";
-import type { CreateManualFlashcardRequest, CreateManualFlashcardResponse, FlashcardInsert } from "@/types";
+import type { CreateManualFlashcardResponse, FlashcardInsert } from "@/types";
 
 export const prerender = false;
 
 const QUESTION_MAX_LENGTH = 500;
 const ANSWER_MAX_LENGTH = 2000;
 
-function isValidRequest(body: unknown): body is CreateManualFlashcardRequest {
-  if (typeof body !== "object" || body === null) return false;
-  const { question, answer } = body as Record<string, unknown>;
-  return (
-    typeof question === "string" &&
-    question.length > 0 &&
-    question.length <= QUESTION_MAX_LENGTH &&
-    typeof answer === "string" &&
-    answer.length > 0 &&
-    answer.length <= ANSWER_MAX_LENGTH
-  );
-}
+const createRequestSchema = z.object({
+  question: z.string().trim().min(1).max(QUESTION_MAX_LENGTH),
+  answer: z.string().trim().min(1).max(ANSWER_MAX_LENGTH),
+});
 
 export const POST: APIRoute = async (context) => {
   const user = context.locals.user;
@@ -26,14 +19,15 @@ export const POST: APIRoute = async (context) => {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: unknown;
+  let json: unknown;
   try {
-    body = await context.request.json();
+    json = await context.request.json();
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  if (!isValidRequest(body)) {
+  const parsed = createRequestSchema.safeParse(json);
+  if (!parsed.success) {
     return Response.json({ error: "question and answer must be non-empty and within length limits" }, { status: 400 });
   }
 
@@ -43,8 +37,8 @@ export const POST: APIRoute = async (context) => {
   }
 
   const row: FlashcardInsert = {
-    question: body.question,
-    answer: body.answer,
+    question: parsed.data.question,
+    answer: parsed.data.answer,
     source: "manual",
     was_edited: false,
     user_id: user.id,

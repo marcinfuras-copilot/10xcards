@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase";
-import type { DeleteFlashcardResponse, UpdateFlashcardRequest, UpdateFlashcardResponse } from "@/types";
+import type { DeleteFlashcardResponse, UpdateFlashcardResponse } from "@/types";
 
 export const prerender = false;
 
@@ -13,18 +14,10 @@ function parseId(raw: string | undefined): number | null {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
-function isValidRequest(body: unknown): body is UpdateFlashcardRequest {
-  if (typeof body !== "object" || body === null) return false;
-  const { question, answer } = body as Record<string, unknown>;
-  return (
-    typeof question === "string" &&
-    question.length > 0 &&
-    question.length <= QUESTION_MAX_LENGTH &&
-    typeof answer === "string" &&
-    answer.length > 0 &&
-    answer.length <= ANSWER_MAX_LENGTH
-  );
-}
+const updateRequestSchema = z.object({
+  question: z.string().trim().min(1).max(QUESTION_MAX_LENGTH),
+  answer: z.string().trim().min(1).max(ANSWER_MAX_LENGTH),
+});
 
 export const PATCH: APIRoute = async (context) => {
   const user = context.locals.user;
@@ -37,14 +30,15 @@ export const PATCH: APIRoute = async (context) => {
     return Response.json({ error: "Invalid flashcard id" }, { status: 400 });
   }
 
-  let body: unknown;
+  let json: unknown;
   try {
-    body = await context.request.json();
+    json = await context.request.json();
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  if (!isValidRequest(body)) {
+  const parsed = updateRequestSchema.safeParse(json);
+  if (!parsed.success) {
     return Response.json({ error: "question and answer must be non-empty and within length limits" }, { status: 400 });
   }
 
@@ -55,7 +49,7 @@ export const PATCH: APIRoute = async (context) => {
 
   const { data, error } = await supabase
     .from("flashcards")
-    .update({ question: body.question, answer: body.answer })
+    .update({ question: parsed.data.question, answer: parsed.data.answer })
     .eq("id", id)
     .select()
     .maybeSingle();

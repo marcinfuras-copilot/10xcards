@@ -66,9 +66,11 @@ export default function FlashcardList() {
   }
 
   function handleDeleted(id: number) {
-    const next = flashcards.filter((c) => c.id !== id);
-    setFlashcards(next);
-    if (next.length === 0) setStatus("empty");
+    setFlashcards((prev) => {
+      const next = prev.filter((c) => c.id !== id);
+      if (next.length === 0) setStatus("empty");
+      return next;
+    });
   }
 
   if (status === "loading") {

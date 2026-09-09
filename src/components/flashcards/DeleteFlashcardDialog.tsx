@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ServerError } from "@/components/auth/ServerError";
@@ -23,6 +23,14 @@ async function parseErrorMessage(response: Response, fallback: string): Promise<
 export function DeleteFlashcardDialog({ open, onOpenChange, flashcard, onDeleted }: DeleteFlashcardDialogProps) {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
+  const isMounted = () => mountedRef.current;
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   async function handleDelete() {
     if (deleting) return;
@@ -31,9 +39,12 @@ export function DeleteFlashcardDialog({ open, onOpenChange, flashcard, onDeleted
     setError(null);
     try {
       const response = await fetch(`/api/flashcards/${flashcard.id}`, { method: "DELETE" });
+      if (!isMounted()) return;
 
       if (!response.ok) {
-        setError(await parseErrorMessage(response, "Couldn't delete flashcard"));
+        const message = await parseErrorMessage(response, "Couldn't delete flashcard");
+        if (!isMounted()) return;
+        setError(message);
         setDeleting(false);
         return;
       }
@@ -41,8 +52,10 @@ export function DeleteFlashcardDialog({ open, onOpenChange, flashcard, onDeleted
       onDeleted(flashcard.id);
       onOpenChange(false);
     } catch {
-      setError("Failed to reach the server. Please try again.");
-      setDeleting(false);
+      if (isMounted()) {
+        setError("Failed to reach the server. Please try again.");
+        setDeleting(false);
+      }
     }
   }
 

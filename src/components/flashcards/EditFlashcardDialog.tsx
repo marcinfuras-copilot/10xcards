@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ServerError } from "@/components/auth/ServerError";
@@ -28,6 +28,14 @@ export function EditFlashcardDialog({ open, onOpenChange, flashcard, onSaved }: 
   const [answer, setAnswer] = useState(flashcard.answer);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
+  const isMounted = () => mountedRef.current;
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const questionError =
     question.trim().length === 0
@@ -58,18 +66,25 @@ export function EditFlashcardDialog({ open, onOpenChange, flashcard, onSaved }: 
         } satisfies UpdateFlashcardRequest),
       });
 
+      if (!isMounted()) return;
+
       if (!response.ok) {
-        setError(await parseErrorMessage(response, "Couldn't save flashcard"));
+        const message = await parseErrorMessage(response, "Couldn't save flashcard");
+        if (!isMounted()) return;
+        setError(message);
         setSaving(false);
         return;
       }
 
       const data = (await response.json()) as UpdateFlashcardResponse;
+      if (!isMounted()) return;
       onSaved(data.flashcard);
       onOpenChange(false);
     } catch {
-      setError("Failed to reach the server. Please try again.");
-      setSaving(false);
+      if (isMounted()) {
+        setError("Failed to reach the server. Please try again.");
+        setSaving(false);
+      }
     }
   }
 

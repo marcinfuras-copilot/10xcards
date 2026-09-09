@@ -1,29 +1,29 @@
 import type { APIRoute } from "astro";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase";
-import { gradeCard, type ReviewRating } from "@/lib/services/scheduler";
-import type { SubmitReviewRequest } from "@/types";
+import { gradeCard } from "@/lib/services/scheduler";
 
 export const prerender = false;
 
-const VALID_RATINGS = new Set<ReviewRating>(["again", "hard", "good", "easy"]);
-
-function isValidRating(value: unknown): value is ReviewRating {
-  return typeof value === "string" && VALID_RATINGS.has(value as ReviewRating);
-}
+const reviewRequestSchema = z.object({
+  id: z.number(),
+  rating: z.enum(["again", "hard", "good", "easy"]),
+});
 
 export const POST: APIRoute = async (context) => {
   if (!context.locals.user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: SubmitReviewRequest;
+  let json: unknown;
   try {
-    body = (await context.request.json()) as SubmitReviewRequest;
+    json = await context.request.json();
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  if (typeof body.id !== "number" || !isValidRating(body.rating)) {
+  const parsed = reviewRequestSchema.safeParse(json);
+  if (!parsed.success) {
     return Response.json({ error: "id and a valid rating are required" }, { status: 400 });
   }
 
@@ -35,7 +35,7 @@ export const POST: APIRoute = async (context) => {
   const { data: row, error: selectError } = await supabase
     .from("flashcards")
     .select("*")
-    .eq("id", body.id)
+    .eq("id", parsed.data.id)
     .maybeSingle();
 
   if (selectError) {
@@ -45,9 +45,9 @@ export const POST: APIRoute = async (context) => {
     return Response.json({ error: "Flashcard not found" }, { status: 404 });
   }
 
-  const update = gradeCard(row, body.rating, new Date());
+  const update = gradeCard(row, parsed.data.rating, new Date());
 
-  const { error: updateError } = await supabase.from("flashcards").update(update).eq("id", body.id);
+  const { error: updateError } = await supabase.from("flashcards").update(update).eq("id", parsed.data.id);
   if (updateError) {
     return Response.json({ error: "Couldn't save review" }, { status: 500 });
   }

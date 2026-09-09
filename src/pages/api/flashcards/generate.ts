@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
+import { z } from "zod";
 import { GenerationError, generateFlashcardCandidates } from "@/lib/services/openrouter";
-import type { GenerateFlashcardsRequest, GenerateFlashcardsResponse } from "@/types";
+import type { GenerateFlashcardsResponse } from "@/types";
 
 export const prerender = false;
 
@@ -13,20 +14,24 @@ const REASON_STATUS: Record<GenerationError["reason"], number> = {
   timeout: 504,
 };
 
+const generateRequestSchema = z.object({
+  text: z.string().min(MIN_TEXT_LENGTH).max(MAX_TEXT_LENGTH),
+});
+
 export const POST: APIRoute = async (context) => {
   if (!context.locals.user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: GenerateFlashcardsRequest;
+  let json: unknown;
   try {
-    body = (await context.request.json()) as GenerateFlashcardsRequest;
+    json = await context.request.json();
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const text = body.text;
-  if (typeof text !== "string" || text.length < MIN_TEXT_LENGTH || text.length > MAX_TEXT_LENGTH) {
+  const parsed = generateRequestSchema.safeParse(json);
+  if (!parsed.success) {
     return Response.json(
       { error: `text must be between ${MIN_TEXT_LENGTH} and ${MAX_TEXT_LENGTH} characters` },
       { status: 400 },
@@ -34,7 +39,7 @@ export const POST: APIRoute = async (context) => {
   }
 
   try {
-    const candidates = await generateFlashcardCandidates(text);
+    const candidates = await generateFlashcardCandidates(parsed.data.text);
     return Response.json({ candidates } satisfies GenerateFlashcardsResponse, { status: 200 });
   } catch (error) {
     if (error instanceof GenerationError) {

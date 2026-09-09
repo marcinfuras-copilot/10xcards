@@ -139,6 +139,7 @@ export async function generateFlashcardCandidates(sourceText: string): Promise<F
   }
 
   return parsed.flashcards
+    .slice(0, MAX_CANDIDATES)
     .map(truncateCandidate)
     .filter((candidate): candidate is FlashcardCandidate => candidate !== null);
 }

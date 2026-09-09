@@ -23,7 +23,7 @@ A logged-in user can navigate to a "Generate flashcards" page, paste text, see A
 ### Key Discoveries:
 
 - OpenRouter's chat completions endpoint (`https://openrouter.ai/api/v1/chat/completions`) is a plain OpenAI-compatible REST API — no SDK dependency is needed, just `fetch` with an `Authorization: Bearer <key>` header, consistent with this codebase having no HTTP client library. Structured output is requested via `response_format: { type: "json_schema", json_schema: { name, strict: true, schema } }`; only some models/providers support it, so the plan pins one that does.
-- `ts-fsrs` exposes `createEmptyCard()`, `fsrs(params)` / `generatorParameters()`, a `Rating` enum (`Again`/`Hard`/`Good`/`Easy`), and `next(card, date, rating)` which returns the updated `Card` + a review log. The `Card` interface's field names (`due`, `stability`, `difficulty`, `elapsed_days`, `scheduled_days`, `reps`, `lapses`, `state`, `last_review`) match the `flashcards` table 1:1, confirming F-01's schema design needs no adapter/translation layer.
+- `ts-fsrs` exposes `createEmptyCard()`, `fsrs(params)` / `generatorParameters()`, a `Rating` enum (`Again`/`Hard`/`Good`/`Easy`), and `next(card, date, rating)` which returns the updated `Card` + a review log. **Addendum (discovered during Phase 3 implementation)**: the installed `ts-fsrs@5.4.2`'s `Card` interface also has a required, non-optional `learning_steps: number` field that F-01's original schema did not include — the "matches 1:1, no adapter needed" claim above was incorrect for this version. An additive migration (see Migration Notes) added the missing column so `rowToCard`/`gradeCard` could satisfy the `Card` type; every other field does match 1:1 as originally stated.
 - `src/lib/config-status.ts` + `Layout.astro` already have a working "missing config → sitewide banner" pattern for Supabase; the same pattern extends cleanly to a missing `OPENROUTER_API_KEY`.
 - The `flashcards` table's `question`/`answer` `CHECK` constraints (≤500 / ≤2000 chars) mean AI-generated candidates that exceed those lengths will fail at insert time (Phase 2) unless validated/truncated when the generation route returns them (Phase 1).
 
@@ -245,7 +245,7 @@ Add `ts-fsrs`, a scheduling service wrapping it, endpoints to fetch due cards an
 
 **Intent**: Translate between the `flashcards` row shape and `ts-fsrs`'s `Card`, and compute the next scheduling state for a graded review.
 
-**Contract**: `rowToCard(row: Flashcard): Card` (direct 1:1 field mapping, per Key Discoveries); `gradeCard(row: Flashcard, rating: "again" | "hard" | "good" | "easy", now: Date): FlashcardUpdate` — maps the rating string to `ts-fsrs`'s `Rating` enum (per "Critical Implementation Details"), calls `next(card, now, rating)`, and returns the updated scheduling fields (`due`, `stability`, `difficulty`, `elapsed_days`, `scheduled_days`, `reps`, `lapses`, `state`, `last_review`) as a partial update — review-log output is discarded per "What We're NOT Doing".
+**Contract**: `rowToCard(row: Flashcard): Card` (direct 1:1 field mapping, per Key Discoveries); `gradeCard(row: Flashcard, rating: "again" | "hard" | "good" | "easy", now: Date): FlashcardUpdate` — maps the rating string to `ts-fsrs`'s `Rating` enum (per "Critical Implementation Details"), calls `next(card, now, rating)`, and returns the updated scheduling fields (`due`, `stability`, `difficulty`, `elapsed_days`, `scheduled_days`, `learning_steps`, `reps`, `lapses`, `state`, `last_review`) as a partial update — review-log output is discarded per "What We're NOT Doing". **Addendum**: `learning_steps` was added to this field list after Phase 3 implementation revealed the installed `ts-fsrs@5.4.2`'s `Card` type requires it (see Key Discoveries addendum and Migration Notes).
 
 #### 3. Study DTOs
 
@@ -337,9 +337,11 @@ Add `ts-fsrs`, a scheduling service wrapping it, endpoints to fetch due cards an
 
 The due-cards query reuses F-01's `(user_id, due)` index — no new index is needed. The generation route's latency is bounded by OpenRouter's response time, which this plan does not attempt to optimize beyond requesting structured output (avoids CPU-heavy regex parsing); the documented Cloudflare Workers CPU-cap risk is accepted per the confirmed decision, mitigated at the infrastructure level (paid plan) rather than in this code.
 
+**Addendum (impl review)**: `/api/flashcards/generate` also has no rate limiting — any authenticated user can call it repeatedly with up to 10,000 chars per request, which is a cost-exposure risk against the OpenRouter budget distinct from the CPU-cap risk above. Accepted as a known MVP risk for the same reason (solo-dev, 3-week timeline, no real traffic yet); revisit if usage grows or abuse is observed.
+
 ## Migration Notes
 
-Not applicable — no schema changes in this plan; F-01's `flashcards` table already has every column this slice needs.
+**Addendum (Phase 3)**: One additive migration was needed after all: `supabase/migrations/20260907215335_add_flashcards_learning_steps.sql` adds `learning_steps smallint not null default 0` to `public.flashcards`. This was discovered during Phase 3 implementation — the installed `ts-fsrs@5.4.2`'s `Card` type requires a `learning_steps` field that F-01's original schema didn't anticipate (see the Key Discoveries addendum above). The migration is safe: purely additive with a default, no backfill needed. Originally this section stated "Not applicable — no schema changes in this plan"; that was true at planning time but incomplete once the installed library version's actual type contract was checked against it.
 
 ## References
 

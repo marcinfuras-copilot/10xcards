@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CircleCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ServerError } from "@/components/auth/ServerError";
@@ -29,6 +29,14 @@ export default function StudySession() {
   const [revealed, setRevealed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
+  const isMounted = () => mountedRef.current;
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -77,9 +85,12 @@ export default function StudySession() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: card.id, rating } satisfies SubmitReviewRequest),
       });
+      if (!isMounted()) return;
 
       if (!response.ok) {
-        setError(await parseErrorMessage(response, "Couldn't save your review"));
+        const message = await parseErrorMessage(response, "Couldn't save your review");
+        if (!isMounted()) return;
+        setError(message);
         setSubmitting(false);
         return;
       }
@@ -92,8 +103,10 @@ export default function StudySession() {
         setRevealed(false);
       }
     } catch {
-      setError("Failed to reach the server. Please try again.");
-      setSubmitting(false);
+      if (isMounted()) {
+        setError("Failed to reach the server. Please try again.");
+        setSubmitting(false);
+      }
     }
   }
 

@@ -227,14 +227,14 @@ No schema changes in this plan. Test setup relies on the two existing migrations
 
 #### Automated
 
-- [ ] 1.1 `npm run test:unit` passes
-- [ ] 1.2 `npx astro check` (typecheck) passes
-- [ ] 1.3 `npm run lint` passes
+- [x] 1.1 `npm run test:unit` passes
+- [x] 1.2 `npx astro check` (typecheck) passes
+- [x] 1.3 `npm run lint` passes
 
 #### Manual
 
-- [ ] 1.4 Inverted-rating-map mutation test confirms the unit test catches a regression, then reverted
-- [ ] 1.5 Confirmed `test:unit` does not require Docker/local Supabase
+- [x] 1.4 Inverted-rating-map mutation test confirms the unit test catches a regression, then reverted
+- [x] 1.5 Confirmed `test:unit` does not require Docker/local Supabase
 
 ### Phase 2: Integration Test Harness + Cross-User IDOR Tests
 

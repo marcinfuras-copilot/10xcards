@@ -1,7 +1,7 @@
 ---
 change_id: testing-critical-path-coverage
 title: Critical-path test coverage — authorization and SR scheduling
-status: planned
+status: implementing
 created: 2026-09-12
 updated: 2026-09-12
 archived_at: null
@@ -21,3 +21,7 @@ Sourced from `context/foundation/test-plan.md`, Rollout Phase **1** ("Critical-p
   - **#2** — prove grading with each of the four ratings (Again/Hard/Good/Easy) moves scheduling fields in the direction the SR algorithm's own contract guarantees, independent of what the code currently outputs. Must challenge: "manual spot-checks already confirmed this looks plausible" — the library's card contract already changed once (`learning_steps` field) without the plan anticipating it. Cheapest layer: unit test on the scheduler mapping function (pure, no network/DB).
 - **PRD refs:** Access Control (flat user model, own-data-only); FR-009 (SR integration is the product's core differentiator).
 - **Prerequisites:** none — `flashcards-data-foundation`, `ai-generate-review-study-loop`, `manual-flashcard-creation`, and `flashcard-management-list` are all already implemented; this change tests existing behavior, it does not add product features.
+
+## Implementation notes
+
+- **Phase 2 Docker blocker (2026-09-12):** the implementing session's shell user isn't in the `docker` group and passwordless `sudo` isn't configured, so `supabase start`/`supabase status` fail with a permission error. Phase 2's integration harness and test code were written and pass `lint`/`astro check`, but `npm run test:integration` itself has not been run or verified — plan.md Progress item 2.1 and the Phase 2 manual checks are left unchecked pending the user running them locally (`npx supabase start`, then `npm run test:integration`).

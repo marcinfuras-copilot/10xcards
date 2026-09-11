@@ -227,22 +227,22 @@ No schema changes in this plan. Test setup relies on the two existing migrations
 
 #### Automated
 
-- [x] 1.1 `npm run test:unit` passes
-- [x] 1.2 `npx astro check` (typecheck) passes
-- [x] 1.3 `npm run lint` passes
+- [x] 1.1 `npm run test:unit` passes — ee163cb
+- [x] 1.2 `npx astro check` (typecheck) passes — ee163cb
+- [x] 1.3 `npm run lint` passes — ee163cb
 
 #### Manual
 
-- [x] 1.4 Inverted-rating-map mutation test confirms the unit test catches a regression, then reverted
-- [x] 1.5 Confirmed `test:unit` does not require Docker/local Supabase
+- [x] 1.4 Inverted-rating-map mutation test confirms the unit test catches a regression, then reverted — ee163cb
+- [x] 1.5 Confirmed `test:unit` does not require Docker/local Supabase — ee163cb
 
 ### Phase 2: Integration Test Harness + Cross-User IDOR Tests
 
 #### Automated
 
-- [ ] 2.1 `npm run test:integration` passes (with `supabase start` running)
-- [ ] 2.2 `npx astro check` passes
-- [ ] 2.3 `npm run lint` passes
+- [ ] 2.1 `npm run test:integration` passes (with `supabase start` running) — BLOCKED: this session has no Docker access (see change.md notes); needs user verification
+- [x] 2.2 `npx astro check` passes
+- [x] 2.3 `npm run lint` passes
 
 #### Manual
 
